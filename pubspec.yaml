@@ -25,6 +25,7 @@ dependencies:
     sdk: flutter
   cloud_firestore: ^2.4.0
   cupertino_icons: ^1.0.2
+  dropdown_search: ^0.6.3
   firebase_auth: ^3.0.1
   firebase_messaging: ^10.0.4
   firebase_storage: ^10.0.1
@@ -35,8 +36,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_native_splash: ^1.2.0
   flutter_launcher_icons: "^0.9.1"
+  flutter_native_splash: ^1.2.0
 
 flutter_native_splash:
   image: assets/images/splash_logo.png

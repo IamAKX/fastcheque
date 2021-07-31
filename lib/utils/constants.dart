@@ -10,6 +10,18 @@ ThemeData globalTheme(BuildContext context) {
     backgroundColor: bgColor,
     primaryColor: primaryColor,
     accentColor: primaryColor,
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        overlayColor:
+            MaterialStateColor.resolveWith((states) => primaryColor.shade300),
+        backgroundColor: MaterialStateProperty.all(primaryColor),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+        ),
+      ),
+    ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
         side: MaterialStateProperty.all<BorderSide>(

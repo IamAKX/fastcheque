@@ -1,4 +1,4 @@
-import 'package:fastcheque/screens/common/login/login_screen.dart';
+import 'package:fastcheque/screens/common/register/register_screen.dart';
 import 'package:fastcheque/utils/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'FastCheque',
       theme: globalTheme(context),
-      home: Login(),
+      home: Register(),
     );
   }
 }
