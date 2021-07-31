@@ -42,13 +42,33 @@ class _StaffHomeContainerState extends State<StaffHomeContainer> {
         backgroundColor: bgColor,
         centerTitle: false,
         actions: [
-          IconButton(
-            onPressed: () => null,
+          PopupMenuButton(
+            offset: Offset(10, 50),
+            onSelected: (value) {
+              switch (value) {
+                case 0:
+                  print('All requet');
+                  break;
+                case 1:
+                  print('Contact us');
+                  break;
+              }
+            },
             icon: Icon(
               Icons.more_vert,
               color: hintColor,
             ),
-          ),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 0,
+                child: Text('All Request'),
+              ),
+              PopupMenuItem(
+                value: 1,
+                child: Text('Contact Us'),
+              ),
+            ],
+          )
         ],
         title: Heading(
           title: title.elementAt(_currentTabIndex),
