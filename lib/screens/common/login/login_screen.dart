@@ -1,3 +1,4 @@
+import 'package:fastcheque/screens/common/forget_password/forget_password.dart';
 import 'package:fastcheque/screens/common/register/register_screen.dart';
 import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
@@ -46,7 +47,8 @@ class _LoginState extends State<Login> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: InkWell(
-                      onTap: () => null,
+                      onTap: () => Navigator.of(context)
+                          .pushNamed(ForgetPassword.FORGET_PASSWORD_ROUTE),
                       child: Container(
                         margin: EdgeInsets.only(bottom: defaultPadding),
                         child: Text(
@@ -62,10 +64,6 @@ class _LoginState extends State<Login> {
                   OutlinedButton(
                     child: Text(
                       'Login',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline6
-                          ?.copyWith(color: primaryColor),
                     ),
                     onPressed: () => null,
                   ),
