@@ -15,9 +15,10 @@ class StaffHomeContainer extends StatefulWidget {
 
 class _StaffHomeContainerState extends State<StaffHomeContainer> {
   List<BottomNavigationBarItem> bottomNavigation = [
-    BottomNavigationBarItem(icon: Icon(Icons.create), label: 'Cheque'),
-    BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Request'),
-    BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+    BottomNavigationBarItem(
+        icon: Icon(Icons.text_snippet_outlined), label: 'Cheque'),
+    BottomNavigationBarItem(icon: Icon(Icons.list_outlined), label: 'Requests'),
+    BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
   ];
   int _currentTabIndex = 0;
 
