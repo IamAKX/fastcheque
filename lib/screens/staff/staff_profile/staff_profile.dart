@@ -1,3 +1,4 @@
+import 'package:fastcheque/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 class StaffProfile extends StatefulWidget {
@@ -10,6 +11,9 @@ class StaffProfile extends StatefulWidget {
 class _StaffProfileState extends State<StaffProfile> {
   @override
   Widget build(BuildContext context) {
-    return ListView();
+    return ListView(
+      padding: EdgeInsets.all(defaultPadding),
+      children: [],
+    );
   }
 }
