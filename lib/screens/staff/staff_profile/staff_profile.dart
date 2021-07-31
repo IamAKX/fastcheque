@@ -1,3 +1,4 @@
+import 'package:fastcheque/screens/common/upload_signature/upload_signature.dart';
 import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
 import 'package:fastcheque/widgets/error_information.dart';
@@ -55,7 +56,8 @@ class _StaffProfileState extends State<StaffProfile> {
           title: Text('Upload signature'),
           leading: Icon(Icons.edit_outlined),
           trailing: Icon(Icons.keyboard_arrow_right_outlined),
-          onTap: () => null,
+          onTap: () => Navigator.of(context)
+              .pushNamed(UploadSignature.UPLOAD_SIGNATURE_ROUTE),
         ),
         Divider(
           color: hintColor,
