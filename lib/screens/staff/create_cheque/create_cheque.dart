@@ -33,7 +33,7 @@ class _CreateChequeState extends State<CreateCheque> {
         ),
         CustomTextField(
           textCtrl: _customerNameController,
-          iconData: Icons.pin_rounded,
+          iconData: Icons.person,
           hint: 'Customer Name',
         ),
         CustomTextField(
