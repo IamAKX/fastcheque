@@ -74,7 +74,7 @@ class _RegisterState extends State<Register> {
                       'Register',
                       style: Theme.of(context)
                           .textTheme
-                          .headline6
+                          .button
                           ?.copyWith(color: Colors.white),
                     ),
                     onPressed: () => null,
