@@ -18,8 +18,7 @@ class _StaffProfileState extends State<StaffProfile> {
       children: [
         Text(
           'Hi, Name!',
-          style: Theme.of(context).textTheme.headline1?.copyWith(
-                fontSize: 50,
+          style: Theme.of(context).textTheme.headline4?.copyWith(
                 color: primaryColor,
               ),
         ),

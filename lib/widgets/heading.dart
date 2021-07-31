@@ -14,7 +14,7 @@ class Heading extends StatelessWidget {
       padding: const EdgeInsets.all(defaultPadding),
       child: Text(
         title,
-        style: Theme.of(context).textTheme.headline4,
+        style: Theme.of(context).textTheme.headline1?.copyWith(fontSize: 40),
       ),
     );
   }

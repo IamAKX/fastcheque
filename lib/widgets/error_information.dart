@@ -20,7 +20,7 @@ class ErrorInformation extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Attension',
+            'Attention',
             style: Theme.of(context).textTheme.headline6?.copyWith(
                   color: Colors.red,
                   fontSize: 18,
