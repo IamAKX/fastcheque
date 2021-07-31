@@ -1,3 +1,4 @@
+import 'package:fastcheque/screens/common/change_password/change_password.dart';
 import 'package:fastcheque/screens/common/upload_signature/upload_signature.dart';
 import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
@@ -68,7 +69,8 @@ class _StaffProfileState extends State<StaffProfile> {
           title: Text('Change password'),
           leading: Icon(Icons.lock_outline),
           trailing: Icon(Icons.keyboard_arrow_right_outlined),
-          onTap: () => null,
+          onTap: () => Navigator.of(context)
+              .pushNamed(ChangePassword.CHANGE_PASSWORD_ROUTE),
         ),
         Divider(
           color: hintColor,

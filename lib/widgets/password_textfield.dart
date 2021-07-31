@@ -7,12 +7,14 @@ class PasswordTextField extends StatelessWidget {
     required TextEditingController passwordCtrl,
     required this.isPasswordVisible,
     required this.tooglePasswordVisibility,
+    this.hint,
   })  : _passwordCtrl = passwordCtrl,
         super(key: key);
 
   final TextEditingController _passwordCtrl;
   final bool isPasswordVisible;
   final Function() tooglePasswordVisibility;
+  final String? hint;
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +26,8 @@ class PasswordTextField extends StatelessWidget {
         obscureText: isPasswordVisible,
         controller: _passwordCtrl,
         decoration: InputDecoration(
-          hintText: 'Password',
-          labelText: 'Password',
+          hintText: hint == null ? 'Password' : hint,
+          labelText: hint == null ? 'Password' : hint,
           suffixIcon: IconButton(
             icon: Icon(
               isPasswordVisible ? Icons.visibility : Icons.visibility_off,

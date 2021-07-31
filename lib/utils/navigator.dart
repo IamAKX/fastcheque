@@ -1,3 +1,4 @@
+import 'package:fastcheque/screens/common/change_password/change_password.dart';
 import 'package:fastcheque/screens/common/forget_password/forget_password.dart';
 import 'package:fastcheque/screens/common/login/login_screen.dart';
 import 'package:fastcheque/screens/common/register/register_screen.dart';
@@ -18,6 +19,8 @@ class NavRoute {
         return MaterialPageRoute(builder: (_) => StaffHomeContainer());
       case UploadSignature.UPLOAD_SIGNATURE_ROUTE:
         return MaterialPageRoute(builder: (_) => UploadSignature());
+      case ChangePassword.CHANGE_PASSWORD_ROUTE:
+        return MaterialPageRoute(builder: (_) => ChangePassword());
 
       default:
         return _errorRoute();
