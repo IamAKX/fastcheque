@@ -1,4 +1,5 @@
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:fastcheque/screens/common/login/login_screen.dart';
 import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
 import 'package:fastcheque/widgets/custom_textfield.dart';
@@ -8,6 +9,7 @@ import 'package:fastcheque/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
 
 class Register extends StatefulWidget {
+  static const String REGISTER_ROUTE = '/register';
   const Register({Key? key}) : super(key: key);
 
   @override
@@ -65,7 +67,7 @@ class _RegisterState extends State<Register> {
                     onChanged: print,
                   ),
                   SizedBox(
-                    height: defaultPadding,
+                    height: defaultPadding * 2,
                   ),
                   TextButton(
                     child: Text(
@@ -93,7 +95,9 @@ class _RegisterState extends State<Register> {
                               ?.copyWith(color: hintColor),
                         ),
                         InkWell(
-                          onTap: () => null,
+                          onTap: () => Navigator.of(context)
+                              .pushNamedAndRemoveUntil(
+                                  Login.LOGIN_ROUTE, (route) => false),
                           child: Text(
                             'Login',
                             style: Theme.of(context)

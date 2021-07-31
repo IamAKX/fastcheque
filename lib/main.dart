@@ -1,5 +1,7 @@
+import 'package:fastcheque/screens/common/login/login_screen.dart';
 import 'package:fastcheque/screens/common/register/register_screen.dart';
 import 'package:fastcheque/utils/constants.dart';
+import 'package:fastcheque/utils/navigator.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -13,7 +15,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'FastCheque',
       theme: globalTheme(context),
-      home: Register(),
+      onGenerateRoute: NavRoute.generatedRoute,
+      initialRoute: Login.LOGIN_ROUTE,
+      home: Login(),
     );
   }
 }

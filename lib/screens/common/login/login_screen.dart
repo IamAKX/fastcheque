@@ -1,3 +1,4 @@
+import 'package:fastcheque/screens/common/register/register_screen.dart';
 import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
 import 'package:fastcheque/widgets/email_textfield.dart';
@@ -6,6 +7,7 @@ import 'package:fastcheque/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
+  static const String LOGIN_ROUTE = '/login';
   const Login({Key? key}) : super(key: key);
 
   @override
@@ -83,7 +85,9 @@ class _LoginState extends State<Login> {
                               ?.copyWith(color: hintColor),
                         ),
                         InkWell(
-                          onTap: () => null,
+                          onTap: () => Navigator.of(context)
+                              .pushNamedAndRemoveUntil(
+                                  Register.REGISTER_ROUTE, (route) => false),
                           child: Text(
                             'Register',
                             style: Theme.of(context)
