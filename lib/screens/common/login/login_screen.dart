@@ -1,5 +1,6 @@
 import 'package:fastcheque/screens/common/forget_password/forget_password.dart';
 import 'package:fastcheque/screens/common/register/register_screen.dart';
+import 'package:fastcheque/screens/staff/staff_home_container/staff_home_container.dart';
 import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
 import 'package:fastcheque/widgets/email_textfield.dart';
@@ -65,7 +66,10 @@ class _LoginState extends State<Login> {
                     child: Text(
                       'Login',
                     ),
-                    onPressed: () => null,
+                    onPressed: () => Navigator.of(context)
+                        .pushNamedAndRemoveUntil(
+                            StaffHomeContainer.STAFF_HOME_CONTAINER_ROUTE,
+                            (route) => false),
                   ),
                   SizedBox(
                     height: defaultPadding,
