@@ -1,3 +1,4 @@
+import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
 import 'package:fastcheque/widgets/email_textfield.dart';
 import 'package:fastcheque/widgets/heading.dart';
@@ -21,11 +22,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Heading(title: 'Forget Password'),
             Expanded(
               child: ListView(
                 padding: EdgeInsets.all(defaultPadding),
                 children: [
+                  Heading(title: 'Forgot Password'),
                   Text(
                     'Enter your registed email address. Password reset link will be shared on your email.',
                     style: Theme.of(context).textTheme.caption,
