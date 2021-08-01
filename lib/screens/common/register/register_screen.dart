@@ -1,5 +1,6 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:fastcheque/screens/common/login/login_screen.dart';
+import 'package:fastcheque/screens/manager/manager_home_container/manager_home_container.dart';
 import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
 import 'package:fastcheque/widgets/custom_textfield.dart';
@@ -77,7 +78,10 @@ class _RegisterState extends State<Register> {
                           .button
                           ?.copyWith(color: Colors.white),
                     ),
-                    onPressed: () => null,
+                    onPressed: () => Navigator.of(context)
+                        .pushNamedAndRemoveUntil(
+                            ManagerHomeContainer.MANAGER_HOME_CONTAINER_ROUTE,
+                            (route) => false),
                   ),
                   SizedBox(
                     height: defaultPadding,
