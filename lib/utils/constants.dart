@@ -62,3 +62,28 @@ ThemeData globalTheme(BuildContext context) {
     canvasColor: secondaryColor,
   );
 }
+
+Theme getDatePickerTheme(Widget? child) {
+  return Theme(
+    data: ThemeData(
+      primarySwatch: Colors.grey,
+      splashColor: Colors.black,
+      textTheme: TextTheme(
+        subtitle1: TextStyle(color: Colors.black),
+        button: TextStyle(color: Colors.black),
+      ),
+      accentColor: Colors.black,
+      colorScheme: ColorScheme.light(
+          primary: primaryColor,
+          primaryVariant: Colors.black,
+          secondaryVariant: Colors.black,
+          onSecondary: Colors.black,
+          onPrimary: Colors.white,
+          surface: Colors.black,
+          onSurface: Colors.black,
+          secondary: Colors.black),
+      dialogBackgroundColor: Colors.white,
+    ),
+    child: child ?? Text(""),
+  );
+}

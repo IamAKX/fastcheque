@@ -1,6 +1,9 @@
+import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
 import 'package:fastcheque/widgets/custom_textfield.dart';
+import 'package:fastcheque/widgets/datepicker_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CreateCheque extends StatefulWidget {
   const CreateCheque({Key? key}) : super(key: key);
@@ -19,7 +22,27 @@ class _CreateChequeState extends State<CreateCheque> {
   TextEditingController _chequeAmountController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
+  TextEditingController _requestDateController = TextEditingController();
   bool _agreement = false;
+
+  DateTime selectedDate = DateTime.now();
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        builder: (BuildContext context, Widget? child) {
+          return getDatePickerTheme(child);
+        },
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        selectedDate = picked;
+        _requestDateController.text =
+            DateFormat('MM/dd/yyyy ').format(selectedDate);
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +79,26 @@ class _CreateChequeState extends State<CreateCheque> {
           iconData: Icons.pin_drop,
           hint: 'Zip',
         ),
-        CustomTextField(
-          textCtrl: _chequeAmountController,
-          iconData: Icons.calendar_today,
-          hint: 'Request Date',
+        // DatePickerTextField(
+        //   textCtrl: _requestDateController,
+        //   iconData: Icons.calendar_today,
+        //   hint: 'Request Date',
+        //   onTapFunction: _selectDate(context),
+        // ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: defaultPadding),
+          child: TextField(
+            onTap: () {
+              _selectDate(context);
+            },
+            autocorrect: true,
+            controller: _requestDateController,
+            decoration: InputDecoration(
+              hintText: 'Request Date',
+              labelText: 'Request Date',
+              prefixIcon: Icon(Icons.calendar_today),
+            ),
+          ),
         ),
         CustomTextField(
           textCtrl: _chequeAmountController,
