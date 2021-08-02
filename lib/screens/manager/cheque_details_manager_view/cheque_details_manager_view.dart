@@ -1,3 +1,4 @@
+import 'package:fastcheque/screens/manager/manager_home_container/manager_home_container.dart';
 import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
 import 'package:fastcheque/widgets/custom_textfield.dart';
@@ -5,17 +6,18 @@ import 'package:fastcheque/widgets/heading.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class ChequeDetailsStaffView extends StatefulWidget {
-  static const String CHEQUE_DETAILS_STAFF_VIEW =
-      '/staff/chequeDetailStaffView';
+class ChequeDetailsManagerView extends StatefulWidget {
+  static const String CHEQUE_DETAILS_MANAGER_VIEW =
+      '/manager/chequeDetailManagerView';
 
-  const ChequeDetailsStaffView({Key? key}) : super(key: key);
+  const ChequeDetailsManagerView({Key? key}) : super(key: key);
 
   @override
-  _ChequeDetailsStaffViewState createState() => _ChequeDetailsStaffViewState();
+  _ChequeDetailsManagerViewState createState() =>
+      _ChequeDetailsManagerViewState();
 }
 
-class _ChequeDetailsStaffViewState extends State<ChequeDetailsStaffView> {
+class _ChequeDetailsManagerViewState extends State<ChequeDetailsManagerView> {
   TextEditingController _stockNumberController = TextEditingController();
   TextEditingController _customerNameController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
@@ -26,9 +28,7 @@ class _ChequeDetailsStaffViewState extends State<ChequeDetailsStaffView> {
   TextEditingController _phoneController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _requestDateController = TextEditingController();
-
-  bool _agreement = false;
-  bool isEditingAllowed = false;
+  TextEditingController _rejectionReasonController = TextEditingController();
 
   DateTime selectedDate = DateTime.now();
 
@@ -50,6 +50,7 @@ class _ChequeDetailsStaffViewState extends State<ChequeDetailsStaffView> {
   }
 
   int imageCount = 2;
+  bool isEditingAllowed = false;
 
   @override
   void initState() {
@@ -230,9 +231,86 @@ class _ChequeDetailsStaffViewState extends State<ChequeDetailsStaffView> {
                 ],
               ),
             ),
+            SizedBox(
+              height: defaultPadding,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => showRejectionReasonPopup(context),
+                    child: Text('Reject'),
+                  ),
+                ),
+                SizedBox(
+                  width: defaultPadding,
+                ),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      'Accept',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),
+    );
+  }
+
+  showRejectionReasonPopup(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(defaultPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Rejection feedback',
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: Icon(Icons.close),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: defaultPadding,
+              ),
+              TextField(
+                controller: _rejectionReasonController,
+                maxLines: 10,
+              ),
+              SizedBox(
+                height: defaultPadding,
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () => Navigator.of(context)
+                      .pushNamedAndRemoveUntil(
+                          ManagerHomeContainer.MANAGER_HOME_CONTAINER_ROUTE,
+                          (route) => false),
+                  child: Text(
+                    'Reject',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:fastcheque/screens/common/forget_password/forget_password.dart';
 import 'package:fastcheque/screens/common/login/login_screen.dart';
 import 'package:fastcheque/screens/common/register/register_screen.dart';
 import 'package:fastcheque/screens/common/upload_signature/upload_signature.dart';
+import 'package:fastcheque/screens/manager/cheque_details_manager_view/cheque_details_manager_view.dart';
 import 'package:fastcheque/screens/manager/manager_home_container/manager_home_container.dart';
 import 'package:fastcheque/screens/staff/cheque_details_staff_view/cheque_details_staff_view.dart';
 import 'package:fastcheque/screens/staff/staff_home_container/staff_home_container.dart';
@@ -27,6 +28,8 @@ class NavRoute {
         return MaterialPageRoute(builder: (_) => ManagerHomeContainer());
       case ChequeDetailsStaffView.CHEQUE_DETAILS_STAFF_VIEW:
         return MaterialPageRoute(builder: (_) => ChequeDetailsStaffView());
+      case ChequeDetailsManagerView.CHEQUE_DETAILS_MANAGER_VIEW:
+        return MaterialPageRoute(builder: (_) => ChequeDetailsManagerView());
 
       default:
         return _errorRoute();
