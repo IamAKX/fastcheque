@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:fastcheque/screens/staff/cheque_details_staff_view/cheque_details_staff_view.dart';
 import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,8 @@ class _RequestHistoryState extends State<RequestHistory> {
       itemBuilder: (context, index) {
         int rand = Random().nextInt(3);
         return ListTile(
+          onTap: () => Navigator.of(context)
+              .pushNamed(ChequeDetailsStaffView.CHEQUE_DETAILS_STAFF_VIEW),
           leading: statusIcon.elementAt(rand),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -4,6 +4,7 @@ import 'package:fastcheque/screens/common/login/login_screen.dart';
 import 'package:fastcheque/screens/common/register/register_screen.dart';
 import 'package:fastcheque/screens/common/upload_signature/upload_signature.dart';
 import 'package:fastcheque/screens/manager/manager_home_container/manager_home_container.dart';
+import 'package:fastcheque/screens/staff/cheque_details_staff_view/cheque_details_staff_view.dart';
 import 'package:fastcheque/screens/staff/staff_home_container/staff_home_container.dart';
 import 'package:flutter/material.dart';
 
@@ -24,6 +25,8 @@ class NavRoute {
         return MaterialPageRoute(builder: (_) => ChangePassword());
       case ManagerHomeContainer.MANAGER_HOME_CONTAINER_ROUTE:
         return MaterialPageRoute(builder: (_) => ManagerHomeContainer());
+      case ChequeDetailsStaffView.CHEQUE_DETAILS_STAFF_VIEW:
+        return MaterialPageRoute(builder: (_) => ChequeDetailsStaffView());
 
       default:
         return _errorRoute();

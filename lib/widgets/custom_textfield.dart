@@ -8,18 +8,21 @@ class CustomTextField extends StatelessWidget {
     required this.iconData,
     required this.hint,
     this.textInputType,
+    this.enabled,
   }) : super(key: key);
 
   final TextEditingController textCtrl;
   final IconData iconData;
   final String hint;
   final TextInputType? textInputType;
+  final bool? enabled;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: defaultPadding),
       child: TextField(
+        enabled: enabled != null ? enabled : true,
         keyboardType:
             textInputType == null ? TextInputType.text : textInputType,
         autocorrect: true,
