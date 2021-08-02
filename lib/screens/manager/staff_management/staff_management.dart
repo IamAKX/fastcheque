@@ -1,3 +1,4 @@
+import 'package:fastcheque/screens/manager/staff_detail_view/staff_detail_view.dart';
 import 'package:fastcheque/utils/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +19,8 @@ class _StaffManagementState extends State<StaffManagement> {
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: defaultPadding),
             child: ListTile(
+              onTap: () => Navigator.of(context)
+                  .pushNamed(StaffDetailView.STAFF_DETAIL_VIEW),
               title: Text('Staff Name $index'),
               subtitle: Text('email$index@gmail.com'),
               trailing: (index % 2 == 0)

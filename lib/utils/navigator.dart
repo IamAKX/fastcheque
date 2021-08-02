@@ -5,6 +5,7 @@ import 'package:fastcheque/screens/common/register/register_screen.dart';
 import 'package:fastcheque/screens/common/upload_signature/upload_signature.dart';
 import 'package:fastcheque/screens/manager/cheque_details_manager_view/cheque_details_manager_view.dart';
 import 'package:fastcheque/screens/manager/manager_home_container/manager_home_container.dart';
+import 'package:fastcheque/screens/manager/staff_detail_view/staff_detail_view.dart';
 import 'package:fastcheque/screens/staff/cheque_details_staff_view/cheque_details_staff_view.dart';
 import 'package:fastcheque/screens/staff/staff_home_container/staff_home_container.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,8 @@ class NavRoute {
         return MaterialPageRoute(builder: (_) => ChequeDetailsStaffView());
       case ChequeDetailsManagerView.CHEQUE_DETAILS_MANAGER_VIEW:
         return MaterialPageRoute(builder: (_) => ChequeDetailsManagerView());
+      case StaffDetailView.STAFF_DETAIL_VIEW:
+        return MaterialPageRoute(builder: (_) => StaffDetailView());
 
       default:
         return _errorRoute();
