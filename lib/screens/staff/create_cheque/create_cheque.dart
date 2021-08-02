@@ -44,6 +44,8 @@ class _CreateChequeState extends State<CreateCheque> {
       });
   }
 
+  int imageCount = 0;
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -114,6 +116,80 @@ class _CreateChequeState extends State<CreateCheque> {
           textCtrl: _emailController,
           iconData: Icons.email,
           hint: 'Email',
+        ),
+        Text('Add Cheque Image'),
+        Container(
+          padding: EdgeInsets.all(defaultPadding),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: borderColor,
+            ),
+            borderRadius: BorderRadius.circular(2),
+            color: fillColor,
+          ),
+          child: Wrap(
+            spacing: defaultPadding / 2,
+            runSpacing: defaultPadding,
+            alignment: WrapAlignment.start,
+            runAlignment: WrapAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                alignment: Alignment.center,
+                child: IconButton(
+                  onPressed: () {
+                    if (imageCount < 3)
+                      setState(() {
+                        imageCount++;
+                      });
+                  },
+                  icon: Icon(
+                    Icons.add,
+                    color: primaryColor,
+                    size: 30,
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(
+                    color: primaryColor,
+                  ),
+                ),
+              ),
+              for (var i = 0; i < imageCount; i++) ...{
+                Stack(
+                  children: [
+                    Container(
+                      width: 80,
+                      height: 80,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                      ),
+                    ),
+                    Positioned(
+                      right: 2,
+                      top: 2,
+                      child: InkWell(
+                        onTap: () {
+                          if (imageCount > 0) {
+                            setState(() {
+                              imageCount--;
+                            });
+                          }
+                        },
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              }
+            ],
+          ),
         ),
         CheckboxListTile(
           title: Text(
