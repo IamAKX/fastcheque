@@ -1,6 +1,5 @@
 import 'package:fastcheque/screens/common/forget_password/forget_password.dart';
 import 'package:fastcheque/screens/common/register/register_screen.dart';
-import 'package:fastcheque/screens/staff/staff_home_container/staff_home_container.dart';
 import 'package:fastcheque/service/authentication_service.dart';
 import 'package:fastcheque/service/snakbar_service.dart';
 import 'package:fastcheque/utils/color.dart';

@@ -15,7 +15,7 @@ class StaffModel {
   bool hasManagerApproved;
   String firebaseFCMToken;
   String userType;
-  List<StoreModel> taggedStores;
+  StoreModel taggedStore;
   StaffModel({
     required this.id,
     required this.uid,
@@ -27,7 +27,7 @@ class StaffModel {
     required this.hasManagerApproved,
     required this.firebaseFCMToken,
     required this.userType,
-    required this.taggedStores,
+    required this.taggedStore,
   });
 
   StaffModel copyWith({
@@ -41,7 +41,7 @@ class StaffModel {
     bool? hasManagerApproved,
     String? firebaseFCMToken,
     String? userType,
-    List<StoreModel>? taggedStores,
+    StoreModel? taggedStore,
   }) {
     return StaffModel(
       id: id ?? this.id,
@@ -54,7 +54,7 @@ class StaffModel {
       hasManagerApproved: hasManagerApproved ?? this.hasManagerApproved,
       firebaseFCMToken: firebaseFCMToken ?? this.firebaseFCMToken,
       userType: userType ?? this.userType,
-      taggedStores: taggedStores ?? this.taggedStores,
+      taggedStore: taggedStore ?? this.taggedStore,
     );
   }
 
@@ -70,7 +70,7 @@ class StaffModel {
       'hasManagerApproved': hasManagerApproved,
       'firebaseFCMToken': firebaseFCMToken,
       'userType': userType,
-      'taggedStores': taggedStores.map((x) => x.toMap()).toList(),
+      'taggedStore': taggedStore.toMap(),
     };
   }
 
@@ -86,8 +86,7 @@ class StaffModel {
       hasManagerApproved: map['hasManagerApproved'],
       firebaseFCMToken: map['firebaseFCMToken'],
       userType: map['userType'],
-      taggedStores: List<StoreModel>.from(
-          map['taggedStores']?.map((x) => StoreModel.fromMap(x))),
+      taggedStore: StoreModel.fromMap(map['taggedStore']),
     );
   }
 
@@ -98,7 +97,7 @@ class StaffModel {
 
   @override
   String toString() {
-    return 'StaffModel(id: $id, uid: $uid, name: $name, email: $email, signatureUrl: $signatureUrl, isProfileActive: $isProfileActive, isPasswordTemporary: $isPasswordTemporary, hasManagerApproved: $hasManagerApproved, firebaseFCMToken: $firebaseFCMToken, userType: $userType, taggedStores: $taggedStores)';
+    return 'StaffModel(id: $id, uid: $uid, name: $name, email: $email, signatureUrl: $signatureUrl, isProfileActive: $isProfileActive, isPasswordTemporary: $isPasswordTemporary, hasManagerApproved: $hasManagerApproved, firebaseFCMToken: $firebaseFCMToken, userType: $userType, taggedStore: $taggedStore)';
   }
 
   @override
@@ -116,7 +115,7 @@ class StaffModel {
         other.hasManagerApproved == hasManagerApproved &&
         other.firebaseFCMToken == firebaseFCMToken &&
         other.userType == userType &&
-        listEquals(other.taggedStores, taggedStores);
+        other.taggedStore == taggedStore;
   }
 
   @override
@@ -131,6 +130,6 @@ class StaffModel {
         hasManagerApproved.hashCode ^
         firebaseFCMToken.hashCode ^
         userType.hashCode ^
-        taggedStores.hashCode;
+        taggedStore.hashCode;
   }
 }

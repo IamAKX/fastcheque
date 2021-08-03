@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fastcheque/main.dart';
 import 'package:fastcheque/model/manager_model.dart';
 import 'package:fastcheque/model/staff_model.dart';
+import 'package:fastcheque/screens/common/login/login_screen.dart';
 import 'package:fastcheque/screens/manager/manager_home_container/manager_home_container.dart';
 import 'package:fastcheque/screens/staff/staff_home_container/staff_home_container.dart';
 import 'package:fastcheque/service/snakbar_service.dart';
@@ -27,11 +28,15 @@ class AuthenticationService extends ChangeNotifier {
   }
 
   Future<void> registerUserWithEmailAndPassword(
-      FirebaseFirestore firestore, ManagerModel model) async {
+      StaffModel model, String password, BuildContext context) async {
+    status = AuthStatus.Authenticating;
+    notifyListeners();
     try {
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
       UserCredential _result = await _auth.createUserWithEmailAndPassword(
-          email: model.email, password: model.email);
+          email: model.email, password: password);
       User? user = _result.user;
+      status = AuthStatus.Authenticated;
 
       user!.updateDisplayName(model.name);
       user.sendEmailVerification();
@@ -44,11 +49,16 @@ class AuthenticationService extends ChangeNotifier {
       await document.set(model.toMap()).then((value) {
         // showToast('User created successfully');
         SnackBarService.instance
-            .showSnackBarSuccess('User created successfully');
+            .showSnackBarSuccess('Registration successfully, please login.');
+        notifyListeners();
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil(Login.LOGIN_ROUTE, (route) => false);
         return;
       });
     } on FirebaseAuthException catch (e) {
+      status = AuthStatus.Error;
       SnackBarService.instance.showSnackBarError('${e.message}');
+      notifyListeners();
     }
   }
 
