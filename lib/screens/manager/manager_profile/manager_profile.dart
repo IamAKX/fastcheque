@@ -1,5 +1,7 @@
 import 'package:fastcheque/screens/common/change_password/change_password.dart';
+import 'package:fastcheque/screens/common/login/login_screen.dart';
 import 'package:fastcheque/screens/common/upload_signature/upload_signature.dart';
+import 'package:fastcheque/service/authentication_service.dart';
 import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
 import 'package:fastcheque/widgets/error_information.dart';
@@ -91,7 +93,11 @@ class _ManagerProfileState extends State<ManagerProfile> {
           title: Text('Sign out'),
           leading: Icon(Icons.logout),
           trailing: Icon(Icons.keyboard_arrow_right_outlined),
-          onTap: () => null,
+          onTap: () {
+            AuthenticationService.instance.logoutUser();
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil(Login.LOGIN_ROUTE, (route) => false);
+          },
         )
       ],
     );

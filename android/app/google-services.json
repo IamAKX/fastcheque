@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "624100706817",
+    "project_id": "fastcheque-eadf9",
+    "storage_bucket": "fastcheque-eadf9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:624100706817:android:7f2dabdee2f68ab2a60e00",
+        "android_client_info": {
+          "package_name": "com.akashapplications.fastcheque"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "624100706817-hresehlhrfa4riah97rc9kth801kfdu9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDH-Yk9nLLRdtbmqNCY4aHVzMVOOD-6mEA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "624100706817-hresehlhrfa4riah97rc9kth801kfdu9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "624100706817-5c6ck15u3pq2m12cao3bvgbis1eq9065.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.akashapplications.fastcheque"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
