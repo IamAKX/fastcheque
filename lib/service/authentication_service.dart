@@ -148,6 +148,22 @@ class AuthenticationService extends ChangeNotifier {
     }
   }
 
+  Future<void> forgotPassword(String _email) async {
+    status = AuthStatus.Authenticating;
+    notifyListeners();
+    try {
+      await _auth.sendPasswordResetEmail(email: _email);
+      status = AuthStatus.ForgotPwdMailSent;
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarSuccess("Please check your mail for reset link");
+    } on FirebaseAuthException catch (e) {
+      SnackBarService.instance.showSnackBarError(e.message!);
+      status = AuthStatus.Error;
+      notifyListeners();
+    }
+  }
+
   void logoutUser() async {
     try {
       await _auth.signOut();

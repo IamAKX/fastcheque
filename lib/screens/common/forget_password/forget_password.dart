@@ -1,8 +1,12 @@
+import 'package:fastcheque/service/authentication_service.dart';
+import 'package:fastcheque/service/snakbar_service.dart';
 import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
+import 'package:fastcheque/utils/validation.dart';
 import 'package:fastcheque/widgets/email_textfield.dart';
 import 'package:fastcheque/widgets/heading.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ForgetPassword extends StatefulWidget {
   static const String FORGET_PASSWORD_ROUTE = '/forget_password';
@@ -14,9 +18,12 @@ class ForgetPassword extends StatefulWidget {
 
 class _ForgetPasswordState extends State<ForgetPassword> {
   TextEditingController _emailCtrl = TextEditingController();
+  late AuthenticationService _auth;
 
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _auth = Provider.of<AuthenticationService>(context);
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -39,8 +46,16 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                     height: defaultPadding * 2,
                   ),
                   OutlinedButton(
-                      onPressed: () => null,
-                      child: Text('Send Pasword Reset Link'))
+                      onPressed: _auth.status == AuthStatus.Authenticating
+                          ? null
+                          : () {
+                              if (checkValidEmail(_emailCtrl.text)) {
+                                _auth.forgotPassword(_emailCtrl.text);
+                              }
+                            },
+                      child: Text(_auth.status == AuthStatus.Authenticating
+                          ? 'Please wait...'
+                          : 'Send Pasword Reset Link'))
                 ],
               ),
             ),
