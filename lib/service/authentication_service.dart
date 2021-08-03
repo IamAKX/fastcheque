@@ -10,10 +10,18 @@ import 'package:fastcheque/utils/preference_key.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class AuthenticationService {
+enum AuthStatus {
+  NotAuthenticated,
+  Authenticating,
+  Authenticated,
+  Error,
+  ForgotPwdMailSent
+}
+
+class AuthenticationService extends ChangeNotifier {
   static AuthenticationService instance = AuthenticationService();
   late FirebaseAuth _auth;
-
+  AuthStatus? status = AuthStatus.NotAuthenticated;
   AuthenticationService() {
     _auth = FirebaseAuth.instance;
   }
@@ -47,11 +55,20 @@ class AuthenticationService {
   Future<void> loginUserWithEmailAndPassword(
       String _email, String _password, BuildContext context) async {
     try {
+      status = AuthStatus.Authenticating;
+      notifyListeners();
+      if (_email.isEmpty || _password.isEmpty) {
+        status = AuthStatus.Error;
+        SnackBarService.instance
+            .showSnackBarError('Email or Password cannot be empty');
+        return;
+      }
       UserCredential _result = await _auth.signInWithEmailAndPassword(
           email: _email, password: _password);
       User? user = _result.user;
 
       if (!user!.emailVerified) {
+        status = AuthStatus.Error;
         SnackBarService.instance.showSnackBarError('Email not verified');
         this.logoutUser();
       } else {
@@ -66,6 +83,7 @@ class AuthenticationService {
           if (map['userType'] == DatabaseConstants.USERS_TYPE_MANAGER) {
             ManagerModel userData = ManagerModel.fromMap(map);
             if (!userData.isProfileActive) {
+              status = AuthStatus.Error;
               SnackBarService.instance.showSnackBarError(
                   'Profile is deactivated by Admin. Contact Admin.');
               this.logoutUser();
@@ -75,18 +93,21 @@ class AuthenticationService {
                 .showSnackBarSuccess('Authentication successful!');
             prefs.setString(PreferenceKey.USER_DATA, userData.toJson());
             prefs.setString(PreferenceKey.USER_TYPE, userData.userType);
+            status = AuthStatus.Authenticated;
             Navigator.of(context).pushNamedAndRemoveUntil(
                 ManagerHomeContainer.MANAGER_HOME_CONTAINER_ROUTE,
                 (route) => false);
           } else {
             StaffModel userData = StaffModel.fromMap(map);
             if (!userData.isProfileActive) {
+              status = AuthStatus.Error;
               SnackBarService.instance.showSnackBarError(
                   'Profile is deactivated by Admin. Contact Admin.');
               this.logoutUser();
               return;
             }
             if (!userData.hasManagerApproved) {
+              status = AuthStatus.Error;
               SnackBarService.instance.showSnackBarError(
                   'Profile is deactivated by Manager. Contact Store manager.');
               this.logoutUser();
@@ -96,16 +117,24 @@ class AuthenticationService {
                 .showSnackBarSuccess('Authentication successful!');
             prefs.setString(PreferenceKey.USER_DATA, userData.toJson());
             prefs.setString(PreferenceKey.USER_TYPE, userData.userType);
+            status = AuthStatus.Authenticated;
             Navigator.of(context).pushNamedAndRemoveUntil(
                 StaffHomeContainer.STAFF_HOME_CONTAINER_ROUTE,
                 (route) => false);
           }
         }).catchError(
                 // ignore: invalid_return_type_for_catch_error
-                (e) => SnackBarService.instance.showSnackBarError(e.message!));
+                (e) {
+          status = AuthStatus.Error;
+          SnackBarService.instance.showSnackBarError(e.message!);
+          notifyListeners();
+        });
       }
+      notifyListeners();
     } on FirebaseAuthException catch (e) {
+      status = AuthStatus.Error;
       SnackBarService.instance.showSnackBarError(e.message!);
+      notifyListeners();
     }
   }
 
@@ -113,9 +142,11 @@ class AuthenticationService {
     try {
       await _auth.signOut();
       prefs.clear();
+      status = AuthStatus.NotAuthenticated;
       return;
     } catch (e) {
       SnackBarService.instance.showSnackBarError("Error Logging Out");
     }
+    notifyListeners();
   }
 }

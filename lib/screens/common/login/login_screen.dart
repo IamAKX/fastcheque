@@ -9,6 +9,7 @@ import 'package:fastcheque/widgets/email_textfield.dart';
 import 'package:fastcheque/widgets/heading.dart';
 import 'package:fastcheque/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
   static const String LOGIN_ROUTE = '/login';
@@ -22,7 +23,7 @@ class _LoginState extends State<Login> {
   TextEditingController _emailCtrl = TextEditingController();
   TextEditingController _passwordCtrl = TextEditingController();
   bool _isPasswordHidden = true;
-
+  late AuthenticationService _auth;
   _togglePasswordVisibility() {
     setState(() {
       _isPasswordHidden = !_isPasswordHidden;
@@ -32,7 +33,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     SnackBarService.instance.buildContext = context;
-
+    _auth = Provider.of<AuthenticationService>(context);
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -68,10 +69,13 @@ class _LoginState extends State<Login> {
                   ),
                   OutlinedButton(
                     child: Text(
-                      'Login',
+                      _auth.status == AuthStatus.Authenticating
+                          ? 'Please wait...'
+                          : 'Login',
                     ),
-                    onPressed: () => AuthenticationService.instance
-                        .loginUserWithEmailAndPassword(
+                    onPressed: () => _auth.status == AuthStatus.Authenticating
+                        ? null
+                        : _auth.loginUserWithEmailAndPassword(
                             _emailCtrl.text, _passwordCtrl.text, context),
                   ),
                   SizedBox(
