@@ -33,7 +33,9 @@ dependencies:
   fluttertoast: ^8.0.7
   google_fonts: ^2.1.0
   intl: ^0.17.0
+  permission_handler: ^8.1.4+2
   provider: ^5.0.0
+  image_picker: ^0.8.3
   shared_preferences: ^2.0.6
   sn_progress_dialog: ^1.0.2
 

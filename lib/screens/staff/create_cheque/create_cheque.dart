@@ -1,9 +1,15 @@
+import 'dart:io';
+
+import 'package:fastcheque/service/snakbar_service.dart';
+import 'package:fastcheque/service/storage_service.dart';
 import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
 import 'package:fastcheque/widgets/custom_textfield.dart';
-import 'package:fastcheque/widgets/datepicker_textfield.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class CreateCheque extends StatefulWidget {
   const CreateCheque({Key? key}) : super(key: key);
@@ -24,7 +30,7 @@ class _CreateChequeState extends State<CreateCheque> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _requestDateController = TextEditingController();
   bool _agreement = false;
-
+  List<String> chequeUrlList = [];
   DateTime selectedDate = DateTime.now();
 
   Future<void> _selectDate(BuildContext context) async {
@@ -44,10 +50,10 @@ class _CreateChequeState extends State<CreateCheque> {
       });
   }
 
-  int imageCount = 0;
-
   @override
   Widget build(BuildContext context) {
+    print(chequeUrlList);
+    SnackBarService.instance.buildContext = context;
     return ListView(
       padding: EdgeInsets.all(defaultPadding),
       children: [
@@ -81,12 +87,6 @@ class _CreateChequeState extends State<CreateCheque> {
           iconData: Icons.pin_drop,
           hint: 'Zip',
         ),
-        // DatePickerTextField(
-        //   textCtrl: _requestDateController,
-        //   iconData: Icons.calendar_today,
-        //   hint: 'Request Date',
-        //   onTapFunction: _selectDate(context),
-        // ),
         Padding(
           padding: const EdgeInsets.only(bottom: defaultPadding),
           child: TextField(
@@ -138,11 +138,38 @@ class _CreateChequeState extends State<CreateCheque> {
                 height: 80,
                 alignment: Alignment.center,
                 child: IconButton(
-                  onPressed: () {
-                    if (imageCount < 3)
-                      setState(() {
-                        imageCount++;
-                      });
+                  onPressed: () async {
+                    if (chequeUrlList.length == 3) {
+                      SnackBarService.instance
+                          .showSnackBarError('You can upload at max 3 images');
+                      return;
+                    }
+                    var permission =
+                        await Permission.storage.request().isGranted;
+                    if (permission) {
+                      final ImagePicker _picker = ImagePicker();
+                      final XFile? image =
+                          await _picker.pickImage(source: ImageSource.gallery);
+
+                      if (image != null) {
+                        File file = File(image.path);
+                        String url = await StorageService.instance
+                            .uploadCheque(file, context);
+                        print('URL => $url');
+                        if (url.length > 0) {
+                          setState(() {
+                            chequeUrlList.add(url);
+                          });
+                        }
+                      } else {
+                        // User canceled the picker
+                        SnackBarService.instance
+                            .showSnackBarError('No file has been uploaded');
+                      }
+                    } else {
+                      SnackBarService.instance
+                          .showSnackBarError('Storage access denied');
+                    }
                   },
                   icon: Icon(
                     Icons.add,
@@ -157,7 +184,7 @@ class _CreateChequeState extends State<CreateCheque> {
                   ),
                 ),
               ),
-              for (var i = 0; i < imageCount; i++) ...{
+              for (var i = 0; i < chequeUrlList.length; i++) ...{
                 Stack(
                   children: [
                     Container(
@@ -165,7 +192,12 @@ class _CreateChequeState extends State<CreateCheque> {
                       height: 80,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: primaryColor,
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            chequeUrlList.elementAt(i),
+                          ),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                     Positioned(
@@ -173,9 +205,9 @@ class _CreateChequeState extends State<CreateCheque> {
                       top: 2,
                       child: InkWell(
                         onTap: () {
-                          if (imageCount > 0) {
+                          if (chequeUrlList.isNotEmpty) {
                             setState(() {
-                              imageCount--;
+                              chequeUrlList.removeAt(i);
                             });
                           }
                         },
