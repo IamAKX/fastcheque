@@ -42,8 +42,10 @@ class _RequestHistoryState extends State<RequestHistory> {
             itemBuilder: (context, index) {
               TransactionModel transaction = _transactionList.elementAt(index);
               return ListTile(
-                onTap: () => Navigator.of(context).pushNamed(
-                    ChequeDetailsStaffView.CHEQUE_DETAILS_STAFF_VIEW),
+                onTap: () => Navigator.of(context)
+                    .pushNamed(ChequeDetailsStaffView.CHEQUE_DETAILS_STAFF_VIEW,
+                        arguments: transaction)
+                    .then((value) => loadAllTransaction()),
                 leading:
                     statusIcon.elementAt(getIndexByStatus(transaction.status)),
                 title: Column(

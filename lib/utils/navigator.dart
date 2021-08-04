@@ -28,7 +28,10 @@ class NavRoute {
       case ManagerHomeContainer.MANAGER_HOME_CONTAINER_ROUTE:
         return MaterialPageRoute(builder: (_) => ManagerHomeContainer());
       case ChequeDetailsStaffView.CHEQUE_DETAILS_STAFF_VIEW:
-        return MaterialPageRoute(builder: (_) => ChequeDetailsStaffView());
+        return MaterialPageRoute(
+            builder: (_) => ChequeDetailsStaffView(
+                  transaction: settings.arguments!,
+                ));
       case ChequeDetailsManagerView.CHEQUE_DETAILS_MANAGER_VIEW:
         return MaterialPageRoute(builder: (_) => ChequeDetailsManagerView());
       case StaffDetailView.STAFF_DETAIL_VIEW:
