@@ -1,9 +1,13 @@
+import 'package:fastcheque/main.dart';
+import 'package:fastcheque/model/manager_model.dart';
+import 'package:fastcheque/model/store_model.dart';
 import 'package:fastcheque/screens/common/change_password/change_password.dart';
 import 'package:fastcheque/screens/common/login/login_screen.dart';
 import 'package:fastcheque/screens/common/upload_signature/upload_signature.dart';
 import 'package:fastcheque/service/authentication_service.dart';
 import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
+import 'package:fastcheque/utils/preference_key.dart';
 import 'package:fastcheque/widgets/error_information.dart';
 import 'package:flutter/material.dart';
 
@@ -15,34 +19,55 @@ class ManagerProfile extends StatefulWidget {
 }
 
 class _ManagerProfileState extends State<ManagerProfile> {
+  late ManagerModel _managerModel;
+  late StoreModel _currentStore;
+
+  loadManagerFromCache() {
+    setState(() {
+      _managerModel =
+          ManagerModel.fromJson(prefs.getString(PreferenceKey.USER_DATA)!);
+      _currentStore =
+          StoreModel.fromJson(prefs.getString(PreferenceKey.CURRENT_STORE)!);
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadManagerFromCache();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: EdgeInsets.all(defaultPadding * 2),
       children: [
         Text(
-          'Hi, Name!',
+          'Hi, ${_managerModel.name}!',
           style: Theme.of(context).textTheme.headline4?.copyWith(
                 color: primaryColor,
               ),
         ),
         ListTile(
           contentPadding: EdgeInsets.zero,
-          trailing: IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.keyboard_arrow_down_outlined,
-              color: primaryColor,
-            ),
-          ),
+          trailing: _managerModel.taggedStores.length > 1
+              ? IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.keyboard_arrow_down_outlined,
+                    color: primaryColor,
+                  ),
+                )
+              : null,
           title: Text(
-            'Store name,',
+            '${_currentStore.businessName}',
             style: Theme.of(context).textTheme.subtitle1?.copyWith(
                   color: primaryColor,
                 ),
           ),
           subtitle: Text(
-            'Address line 1',
+            '${_currentStore.businessAddress}',
             style: Theme.of(context).textTheme.subtitle1?.copyWith(
                   color: primaryColor,
                 ),
@@ -52,10 +77,7 @@ class _ManagerProfileState extends State<ManagerProfile> {
           height: defaultPadding,
         ),
         ErrorInformation(
-          hint: [
-            'Upload you signature',
-            'Reset your password',
-          ],
+          hint: getErrorList(),
         ),
         SizedBox(
           height: defaultPadding * 2,
@@ -101,5 +123,17 @@ class _ManagerProfileState extends State<ManagerProfile> {
         )
       ],
     );
+  }
+
+  getErrorList() {
+    List<String> err = [];
+
+    if (_managerModel.signatureUrl.isEmpty) err.add('Upload you signature');
+    if (_managerModel.isPasswordTemporary)
+      err.add(
+        'Reset your password',
+      );
+
+    return err;
   }
 }

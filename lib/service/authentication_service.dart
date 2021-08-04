@@ -103,6 +103,9 @@ class AuthenticationService extends ChangeNotifier {
                 .showSnackBarSuccess('Authentication successful!');
             prefs.setString(PreferenceKey.USER_DATA, userData.toJson());
             prefs.setString(PreferenceKey.USER_TYPE, userData.userType);
+            prefs.setString(PreferenceKey.CURRENT_STORE,
+                userData.taggedStores.first.toJson());
+            prefs.setBool(PreferenceKey.LOGGED_IN_STATUS, true);
             status = AuthStatus.Authenticated;
             Navigator.of(context).pushNamedAndRemoveUntil(
                 ManagerHomeContainer.MANAGER_HOME_CONTAINER_ROUTE,
@@ -127,6 +130,9 @@ class AuthenticationService extends ChangeNotifier {
                 .showSnackBarSuccess('Authentication successful!');
             prefs.setString(PreferenceKey.USER_DATA, userData.toJson());
             prefs.setString(PreferenceKey.USER_TYPE, userData.userType);
+            prefs.setString(
+                PreferenceKey.CURRENT_STORE, userData.taggedStore.toJson());
+            prefs.setBool(PreferenceKey.LOGGED_IN_STATUS, true);
             status = AuthStatus.Authenticated;
             Navigator.of(context).pushNamedAndRemoveUntil(
                 StaffHomeContainer.STAFF_HOME_CONTAINER_ROUTE,

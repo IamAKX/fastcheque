@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 
 class ManagerHomeContainer extends StatefulWidget {
   static const String MANAGER_HOME_CONTAINER_ROUTE = '/manager/home';
-
   const ManagerHomeContainer({Key? key}) : super(key: key);
 
   @override
