@@ -32,7 +32,10 @@ class NavRoute {
       case ChequeDetailsManagerView.CHEQUE_DETAILS_MANAGER_VIEW:
         return MaterialPageRoute(builder: (_) => ChequeDetailsManagerView());
       case StaffDetailView.STAFF_DETAIL_VIEW:
-        return MaterialPageRoute(builder: (_) => StaffDetailView());
+        return MaterialPageRoute(
+            builder: (_) => StaffDetailView(
+                  staff: settings.arguments!,
+                ));
 
       default:
         return _errorRoute();

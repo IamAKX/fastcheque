@@ -1,3 +1,5 @@
+import 'package:fastcheque/model/staff_model.dart';
+import 'package:fastcheque/service/firestore_service.dart';
 import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
 import 'package:fastcheque/widgets/heading.dart';
@@ -5,15 +7,15 @@ import 'package:flutter/material.dart';
 
 class StaffDetailView extends StatefulWidget {
   static const String STAFF_DETAIL_VIEW = '/manager/staffDetailView';
-  const StaffDetailView({Key? key}) : super(key: key);
+  final Object staff;
+  const StaffDetailView({Key? key, required this.staff}) : super(key: key);
 
   @override
   _StaffDetailViewState createState() => _StaffDetailViewState();
 }
 
 class _StaffDetailViewState extends State<StaffDetailView> {
-  bool _isActive = true;
-
+  late StaffModel _staffModel = widget.staff as StaffModel;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +35,7 @@ class _StaffDetailViewState extends State<StaffDetailView> {
               ListTile(
                 title: Text('Name'),
                 trailing: Text(
-                  'Customer Name 1',
+                  '${_staffModel.name}',
                   style: Theme.of(context).textTheme.subtitle1?.copyWith(
                         fontSize: 18,
                       ),
@@ -42,7 +44,7 @@ class _StaffDetailViewState extends State<StaffDetailView> {
               ListTile(
                 title: Text('Email'),
                 trailing: Text(
-                  'email1@gmail.com',
+                  '${_staffModel.email}',
                   style: Theme.of(context).textTheme.subtitle1?.copyWith(
                         fontSize: 18,
                       ),
@@ -51,27 +53,25 @@ class _StaffDetailViewState extends State<StaffDetailView> {
               ListTile(
                 title: Text('Temporary password'),
                 trailing: Text(
-                  'Yes',
+                  _staffModel.isPasswordTemporary ? 'YES' : 'NO',
                   style: Theme.of(context).textTheme.subtitle1?.copyWith(
                         fontSize: 18,
-                        color: Colors.green,
                       ),
                 ),
               ),
               ListTile(
                 title: Text('Admin approved'),
                 trailing: Text(
-                  'NO',
+                  _staffModel.isProfileActive ? 'YES' : 'NO',
                   style: Theme.of(context).textTheme.subtitle1?.copyWith(
                         fontSize: 18,
-                        color: Colors.red,
                       ),
                 ),
               ),
               ListTile(
                 title: Text('Store'),
                 trailing: Text(
-                  'Store name',
+                  '${_staffModel.taggedStore.businessName}',
                   style: Theme.of(context).textTheme.subtitle1?.copyWith(
                         fontSize: 18,
                       ),
@@ -80,11 +80,13 @@ class _StaffDetailViewState extends State<StaffDetailView> {
               ListTile(
                 title: Text('Status'),
                 trailing: Switch(
-                    value: _isActive,
+                    value: _staffModel.hasManagerApproved,
                     onChanged: (value) {
                       setState(
                         () {
-                          _isActive = value;
+                          _staffModel.hasManagerApproved = value;
+                          FireStoreService.instance
+                              .toggleManagerApprovedStatus(_staffModel);
                         },
                       );
                     }),

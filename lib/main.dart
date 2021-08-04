@@ -2,6 +2,7 @@ import 'package:fastcheque/screens/common/login/login_screen.dart';
 import 'package:fastcheque/screens/manager/manager_home_container/manager_home_container.dart';
 import 'package:fastcheque/screens/staff/staff_home_container/staff_home_container.dart';
 import 'package:fastcheque/service/authentication_service.dart';
+import 'package:fastcheque/service/firestore_service.dart';
 import 'package:fastcheque/utils/constants.dart';
 import 'package:fastcheque/utils/database_constants.dart';
 import 'package:fastcheque/utils/navigator.dart';
@@ -29,6 +30,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (BuildContext context) => AuthenticationService(),
+        ),
+        ChangeNotifierProvider(
+          create: (BuildContext context) => FireStoreService(),
         ),
       ],
       child: MaterialApp(
