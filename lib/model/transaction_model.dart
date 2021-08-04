@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:fastcheque/model/manager_model.dart';
@@ -30,7 +31,7 @@ class TransactionModel {
   String status;
   String chequeSequence;
   String rejectionReason;
-  DateTime lastUpdated;
+  Timestamp lastUpdated;
   TransactionModel({
     required this.stockNumber,
     required this.customerName,
@@ -82,7 +83,7 @@ class TransactionModel {
     String? status,
     String? chequeSequence,
     String? rejectionReason,
-    DateTime? lastUpdated,
+    Timestamp? lastUpdated,
   }) {
     return TransactionModel(
       stockNumber: stockNumber ?? this.stockNumber,
@@ -137,7 +138,7 @@ class TransactionModel {
       'status': status,
       'chequeSequence': chequeSequence,
       'rejectionReason': rejectionReason,
-      'lastUpdated': lastUpdated.millisecondsSinceEpoch,
+      'lastUpdated': lastUpdated,
     };
   }
 
@@ -162,11 +163,13 @@ class TransactionModel {
       approvedBy: map['approvedBy'],
       storeDetail: StoreModel.fromMap(map['storeDetail']),
       initiatorDetail: StaffModel.fromMap(map['initiatorDetail']),
-      approverDetail: ManagerModel.fromMap(map['approverDetail']),
+      approverDetail: map['approverDetail'] == null
+          ? null
+          : ManagerModel.fromMap(map['approverDetail']),
       status: map['status'],
       chequeSequence: map['chequeSequence'],
       rejectionReason: map['rejectionReason'],
-      lastUpdated: DateTime.fromMillisecondsSinceEpoch(map['lastUpdated']),
+      lastUpdated: map['lastUpdated'],
     );
   }
 

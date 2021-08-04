@@ -38,6 +38,7 @@ dependencies:
   image_picker: ^0.8.3
   shared_preferences: ^2.0.6
   sn_progress_dialog: ^1.0.2
+  timeago: ^3.1.0
 
 dev_dependencies:
   flutter_test:

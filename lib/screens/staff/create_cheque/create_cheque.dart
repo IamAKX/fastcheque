@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fastcheque/main.dart';
 import 'package:fastcheque/model/manager_model.dart';
 import 'package:fastcheque/model/staff_model.dart';
@@ -286,7 +287,7 @@ class _CreateChequeState extends State<CreateCheque> {
                         status: TransactionStatus.SUBMITTED,
                         chequeSequence: store.chequeSequenceNumber,
                         rejectionReason: '',
-                        lastUpdated: DateTime.now());
+                        lastUpdated: Timestamp.now());
                     bool createStatus = await _fireStoreService
                         .createTransaction(transactionModel);
 

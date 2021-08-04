@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fastcheque/model/staff_model.dart';
 import 'package:fastcheque/model/store_model.dart';
@@ -29,8 +31,8 @@ class FireStoreService extends ChangeNotifier {
         list.add(store);
       });
       return list;
-      // ignore: invalid_return_type_for_catch_error
-    }).catchError((error) => SnackBarService.instance.showSnackBarError(error));
+    }).catchError((error) =>
+            SnackBarService.instance.showSnackBarError(error.toString()));
     return list;
   }
 
@@ -50,7 +52,6 @@ class FireStoreService extends ChangeNotifier {
       status = DatabaseTransactionStatus.SUCCESS;
       notifyListeners();
       return list;
-      // ignore: invalid_return_type_for_catch_error
     }).catchError((error) {
       status = DatabaseTransactionStatus.FAILED;
       notifyListeners();
@@ -93,7 +94,9 @@ class FireStoreService extends ChangeNotifier {
     DocumentReference ref =
         _firestore.collection(DatabaseConstants.TRANSACTION_COLLECTION).doc();
     model.id = ref.id;
-    await ref.set(model.toMap()).then((value) {
+    Map<String, dynamic> map = model.toMap();
+    map['lastUpdated'] = Timestamp.now();
+    await ref.set(map).then((value) {
       status = DatabaseTransactionStatus.SUCCESS;
       notifyListeners();
       SnackBarService.instance.showSnackBarSuccess('Cheque sent for approval');
@@ -107,5 +110,58 @@ class FireStoreService extends ChangeNotifier {
     status = DatabaseTransactionStatus.FAILED;
     notifyListeners();
     return false;
+  }
+
+  Future<List<TransactionModel>> readTransactionByStaffID(String id) async {
+    List<TransactionModel> list = [];
+    status = DatabaseTransactionStatus.QUERYING;
+    notifyListeners();
+    await _firestore
+        .collection(DatabaseConstants.TRANSACTION_COLLECTION)
+        .where('initiatorID', isEqualTo: id)
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((querySnapshot) {
+        TransactionModel store = TransactionModel.fromMap(querySnapshot.data());
+        list.add(store);
+      });
+      status = DatabaseTransactionStatus.SUCCESS;
+      notifyListeners();
+      return list;
+    }).catchError((error) {
+      status = DatabaseTransactionStatus.FAILED;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(error.toString());
+    });
+    status = DatabaseTransactionStatus.SUCCESS;
+    notifyListeners();
+    return list;
+  }
+
+  Future<List<TransactionModel>> readTransactionByStoreID(String id) async {
+    List<TransactionModel> list = [];
+    status = DatabaseTransactionStatus.QUERYING;
+    notifyListeners();
+    await _firestore
+        .collection(DatabaseConstants.TRANSACTION_COLLECTION)
+        .orderBy('lastUpdated', descending: true)
+        .where('asignedTo', isEqualTo: id)
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((querySnapshot) {
+        TransactionModel store = TransactionModel.fromMap(querySnapshot.data());
+        list.add(store);
+      });
+      status = DatabaseTransactionStatus.SUCCESS;
+      notifyListeners();
+      return list;
+    }).catchError((error) {
+      status = DatabaseTransactionStatus.FAILED;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(error);
+    });
+    status = DatabaseTransactionStatus.SUCCESS;
+    notifyListeners();
+    return list;
   }
 }
