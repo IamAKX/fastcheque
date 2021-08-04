@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fastcheque/model/staff_model.dart';
 import 'package:fastcheque/model/store_model.dart';
+import 'package:fastcheque/model/transaction_model.dart';
 import 'package:fastcheque/service/snakbar_service.dart';
 import 'package:fastcheque/utils/database_constants.dart';
 import 'package:flutter/material.dart';
@@ -69,6 +70,42 @@ class FireStoreService extends ChangeNotifier {
     }).onError((error, stackTrace) {
       return false;
     });
+    return false;
+  }
+
+  Future<int> getChequeCountStartingWith(String sequencePrefix) async {
+    int count = 0;
+    await _firestore
+        .collection(DatabaseConstants.TRANSACTION_COLLECTION)
+        .where('chequeSequence', isEqualTo: sequencePrefix)
+        .get()
+        .then((value) {
+      count = value.docs.length;
+    }).onError((error, stackTrace) {
+      SnackBarService.instance.showSnackBarError(error.toString());
+    });
+    return count;
+  }
+
+  Future<bool> createTransaction(TransactionModel model) async {
+    status = DatabaseTransactionStatus.QUERYING;
+    notifyListeners();
+    DocumentReference ref =
+        _firestore.collection(DatabaseConstants.TRANSACTION_COLLECTION).doc();
+    model.id = ref.id;
+    await ref.set(model.toMap()).then((value) {
+      status = DatabaseTransactionStatus.SUCCESS;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarSuccess('Cheque sent for approval');
+      return true;
+    }).catchError((err) {
+      status = DatabaseTransactionStatus.FAILED;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(err.toString());
+      return false;
+    });
+    status = DatabaseTransactionStatus.FAILED;
+    notifyListeners();
     return false;
   }
 }

@@ -26,8 +26,9 @@ class TransactionModel {
   String approvedBy;
   StoreModel storeDetail;
   StaffModel initiatorDetail;
-  ManagerModel approverDetail;
+  ManagerModel? approverDetail;
   String status;
+  String chequeSequence;
   String rejectionReason;
   DateTime lastUpdated;
   TransactionModel({
@@ -50,8 +51,9 @@ class TransactionModel {
     required this.approvedBy,
     required this.storeDetail,
     required this.initiatorDetail,
-    required this.approverDetail,
+    this.approverDetail,
     required this.status,
+    required this.chequeSequence,
     required this.rejectionReason,
     required this.lastUpdated,
   });
@@ -78,6 +80,7 @@ class TransactionModel {
     StaffModel? initiatorDetail,
     ManagerModel? approverDetail,
     String? status,
+    String? chequeSequence,
     String? rejectionReason,
     DateTime? lastUpdated,
   }) {
@@ -103,6 +106,7 @@ class TransactionModel {
       initiatorDetail: initiatorDetail ?? this.initiatorDetail,
       approverDetail: approverDetail ?? this.approverDetail,
       status: status ?? this.status,
+      chequeSequence: chequeSequence ?? this.chequeSequence,
       rejectionReason: rejectionReason ?? this.rejectionReason,
       lastUpdated: lastUpdated ?? this.lastUpdated,
     );
@@ -129,8 +133,9 @@ class TransactionModel {
       'approvedBy': approvedBy,
       'storeDetail': storeDetail.toMap(),
       'initiatorDetail': initiatorDetail.toMap(),
-      'approverDetail': approverDetail.toMap(),
+      'approverDetail': approverDetail?.toMap(),
       'status': status,
+      'chequeSequence': chequeSequence,
       'rejectionReason': rejectionReason,
       'lastUpdated': lastUpdated.millisecondsSinceEpoch,
     };
@@ -159,6 +164,7 @@ class TransactionModel {
       initiatorDetail: StaffModel.fromMap(map['initiatorDetail']),
       approverDetail: ManagerModel.fromMap(map['approverDetail']),
       status: map['status'],
+      chequeSequence: map['chequeSequence'],
       rejectionReason: map['rejectionReason'],
       lastUpdated: DateTime.fromMillisecondsSinceEpoch(map['lastUpdated']),
     );
@@ -171,7 +177,7 @@ class TransactionModel {
 
   @override
   String toString() {
-    return 'TransactionModel(stockNumber: $stockNumber, customerName: $customerName, address: $address, city: $city, state: $state, zipCode: $zipCode, requestDate: $requestDate, chequeAmount: $chequeAmount, phoneNumber: $phoneNumber, email: $email, photos: $photos, chequeID: $chequeID, id: $id, createAt: $createAt, initiatorID: $initiatorID, asignedTo: $asignedTo, approvedBy: $approvedBy, storeDetail: $storeDetail, initiatorDetail: $initiatorDetail, approverDetail: $approverDetail, status: $status, rejectionReason: $rejectionReason, lastUpdated: $lastUpdated)';
+    return 'TransactionModel(stockNumber: $stockNumber, customerName: $customerName, address: $address, city: $city, state: $state, zipCode: $zipCode, requestDate: $requestDate, chequeAmount: $chequeAmount, phoneNumber: $phoneNumber, email: $email, photos: $photos, chequeID: $chequeID, id: $id, createAt: $createAt, initiatorID: $initiatorID, asignedTo: $asignedTo, approvedBy: $approvedBy, storeDetail: $storeDetail, initiatorDetail: $initiatorDetail, approverDetail: $approverDetail, status: $status, chequeSequence: $chequeSequence, rejectionReason: $rejectionReason, lastUpdated: $lastUpdated)';
   }
 
   @override
@@ -200,6 +206,7 @@ class TransactionModel {
         other.initiatorDetail == initiatorDetail &&
         other.approverDetail == approverDetail &&
         other.status == status &&
+        other.chequeSequence == chequeSequence &&
         other.rejectionReason == rejectionReason &&
         other.lastUpdated == lastUpdated;
   }
@@ -227,6 +234,7 @@ class TransactionModel {
         initiatorDetail.hashCode ^
         approverDetail.hashCode ^
         status.hashCode ^
+        chequeSequence.hashCode ^
         rejectionReason.hashCode ^
         lastUpdated.hashCode;
   }

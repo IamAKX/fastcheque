@@ -87,3 +87,9 @@ Theme getDatePickerTheme(Widget? child) {
     child: child ?? Text(""),
   );
 }
+
+class TransactionStatus {
+  static const String SUBMITTED = 'SUBMITTED';
+  static const String APPROVED = 'APPROVED';
+  static const String REJECTED = 'REJECTED';
+}

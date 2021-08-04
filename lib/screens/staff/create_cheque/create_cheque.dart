@@ -1,15 +1,23 @@
 import 'dart:io';
 
+import 'package:fastcheque/main.dart';
+import 'package:fastcheque/model/manager_model.dart';
+import 'package:fastcheque/model/staff_model.dart';
+import 'package:fastcheque/model/store_model.dart';
+import 'package:fastcheque/model/transaction_model.dart';
+import 'package:fastcheque/service/firestore_service.dart';
 import 'package:fastcheque/service/snakbar_service.dart';
 import 'package:fastcheque/service/storage_service.dart';
 import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
+import 'package:fastcheque/utils/preference_key.dart';
+import 'package:fastcheque/utils/validation.dart';
 import 'package:fastcheque/widgets/custom_textfield.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 class CreateCheque extends StatefulWidget {
   const CreateCheque({Key? key}) : super(key: key);
@@ -33,6 +41,8 @@ class _CreateChequeState extends State<CreateCheque> {
   List<String> chequeUrlList = [];
   DateTime selectedDate = DateTime.now();
 
+  late FireStoreService _fireStoreService;
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         builder: (BuildContext context, Widget? child) {
@@ -52,8 +62,8 @@ class _CreateChequeState extends State<CreateCheque> {
 
   @override
   Widget build(BuildContext context) {
-    print(chequeUrlList);
     SnackBarService.instance.buildContext = context;
+    _fireStoreService = Provider.of<FireStoreService>(context);
     return ListView(
       padding: EdgeInsets.all(defaultPadding),
       children: [
@@ -155,7 +165,6 @@ class _CreateChequeState extends State<CreateCheque> {
                         File file = File(image.path);
                         String url = await StorageService.instance
                             .uploadCheque(file, context);
-                        print('URL => $url');
                         if (url.length > 0) {
                           setState(() {
                             chequeUrlList.add(url);
@@ -241,13 +250,152 @@ class _CreateChequeState extends State<CreateCheque> {
           height: defaultPadding,
         ),
         TextButton(
-          onPressed: () {},
+          onPressed: _fireStoreService.status ==
+                  DatabaseTransactionStatus.QUERYING
+              ? null
+              : () async {
+                  if (validateInputs()) {
+                    StoreModel store = StoreModel.fromJson(
+                        prefs.getString(PreferenceKey.CURRENT_STORE)!);
+                    StaffModel staff = StaffModel.fromJson(
+                        prefs.getString(PreferenceKey.USER_DATA)!);
+                    int count = await FireStoreService.instance
+                        .getChequeCountStartingWith(store.chequeSequenceNumber);
+                    TransactionModel transactionModel = new TransactionModel(
+                        stockNumber: _stockNumberController.text,
+                        customerName: _customerNameController.text,
+                        address: _addressController.text,
+                        city: _cityController.text,
+                        state: _stateController.text,
+                        zipCode: int.parse(_zipController.text),
+                        requestDate: _requestDateController.text,
+                        chequeAmount:
+                            double.parse(_chequeAmountController.text),
+                        phoneNumber: _phoneController.text,
+                        email: _emailController.text,
+                        photos: chequeUrlList,
+                        chequeID:
+                            '${store.chequeSequenceNumber}00000${count + 1}',
+                        id: '',
+                        createAt: selectedDate,
+                        initiatorID: staff.id,
+                        asignedTo: store.id,
+                        approvedBy: '',
+                        storeDetail: store,
+                        initiatorDetail: staff,
+                        status: TransactionStatus.SUBMITTED,
+                        chequeSequence: store.chequeSequenceNumber,
+                        rejectionReason: '',
+                        lastUpdated: DateTime.now());
+                    bool createStatus = await _fireStoreService
+                        .createTransaction(transactionModel);
+
+                    print('createStatus = $createStatus');
+                    if (!createStatus) {
+                      setState(() {
+                        _stockNumberController.text = '';
+                        _customerNameController.text = '';
+                        _addressController.text = '';
+                        _cityController.text = '';
+                        _stateController.text = '';
+                        _zipController.text = '';
+                        _chequeAmountController.text = '';
+                        _phoneController.text = '';
+                        _emailController.text = '';
+                        _requestDateController.text = '';
+                        _agreement = false;
+                        chequeUrlList = [];
+                        selectedDate = DateTime.now();
+                      });
+                    }
+                  }
+                },
           child: Text(
-            'Generate Cheque',
+            _fireStoreService.status == DatabaseTransactionStatus.QUERYING
+                ? 'Please wait...'
+                : 'Generate Cheque',
             style: TextStyle(color: Colors.white),
           ),
         ),
       ],
     );
+  }
+
+  bool validateInputs() {
+    if (_stockNumberController.text.isEmpty) {
+      SnackBarService.instance
+          .showSnackBarError('Stock number cannot be empty');
+      return false;
+    }
+    if (_customerNameController.text.isEmpty) {
+      SnackBarService.instance
+          .showSnackBarError('Customer name cannot be empty');
+      return false;
+    }
+    if (_addressController.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Address cannot be empty');
+      return false;
+    }
+    if (_cityController.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('City cannot be empty');
+      return false;
+    }
+    if (_stateController.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('State cannot be empty');
+      return false;
+    }
+    if (_zipController.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Zip code cannot be empty');
+      return false;
+    }
+    if (!isNumeric(_zipController.text)) {
+      SnackBarService.instance.showSnackBarError('Invalid zip code');
+      return false;
+    }
+
+    if (_requestDateController.text.isEmpty) {
+      SnackBarService.instance
+          .showSnackBarError('Requested date cannot be empty');
+      return false;
+    }
+    if (_chequeAmountController.text.isEmpty) {
+      SnackBarService.instance
+          .showSnackBarError('Cheque amount cannot be empty');
+      return false;
+    }
+    if (!isNumeric(_stockNumberController.text)) {
+      SnackBarService.instance.showSnackBarError('Invalid cheque amount');
+      return false;
+    }
+    if (_phoneController.text.isEmpty) {
+      SnackBarService.instance
+          .showSnackBarError('Phone number cannot be empty');
+      return false;
+    }
+    if (!isNumeric(_phoneController.text)) {
+      SnackBarService.instance.showSnackBarError('Invalid phone number');
+      return false;
+    }
+
+    if (_emailController.text.isEmpty) {
+      SnackBarService.instance.showSnackBarError('Email cannot be empty');
+      return false;
+    }
+    if (!checkValidEmail(_emailController.text)) {
+      return false;
+    }
+
+    if (chequeUrlList.isEmpty) {
+      SnackBarService.instance
+          .showSnackBarError('Upload atleast one cheque image');
+      return false;
+    }
+
+    if (!_agreement) {
+      SnackBarService.instance
+          .showSnackBarError('Check the agreement statement');
+      return false;
+    }
+    return true;
   }
 }
