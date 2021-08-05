@@ -46,8 +46,12 @@ class _ChequeRequestState extends State<ChequeRequest> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: defaultPadding),
                   child: ListTile(
-                    onTap: () => Navigator.of(context).pushNamed(
-                        ChequeDetailsManagerView.CHEQUE_DETAILS_MANAGER_VIEW),
+                    onTap: () => Navigator.of(context)
+                        .pushNamed(
+                            ChequeDetailsManagerView
+                                .CHEQUE_DETAILS_MANAGER_VIEW,
+                            arguments: transactionModel)
+                        .then((value) => loadAllTransaction()),
                     title: Text('${transactionModel.customerName}'),
                     subtitle: Text('${transactionModel.chequeID}'),
                     trailing: Text(

@@ -5,6 +5,7 @@ import 'package:fastcheque/model/staff_model.dart';
 import 'package:fastcheque/model/store_model.dart';
 import 'package:fastcheque/model/transaction_model.dart';
 import 'package:fastcheque/service/snakbar_service.dart';
+import 'package:fastcheque/utils/constants.dart';
 import 'package:fastcheque/utils/database_constants.dart';
 import 'package:flutter/material.dart';
 
@@ -147,6 +148,7 @@ class FireStoreService extends ChangeNotifier {
         .collection(DatabaseConstants.TRANSACTION_COLLECTION)
         .orderBy('lastUpdated', descending: true)
         .where('asignedTo', isEqualTo: id)
+        .where('status', isEqualTo: TransactionStatus.SUBMITTED)
         .get()
         .then((querySnapshot) {
       querySnapshot.docs.forEach((querySnapshot) {
@@ -164,5 +166,24 @@ class FireStoreService extends ChangeNotifier {
     status = DatabaseTransactionStatus.SUCCESS;
     notifyListeners();
     return list;
+  }
+
+  Future<bool> updateTransaction(TransactionModel transactionModel) async {
+    await _firestore
+        .collection(DatabaseConstants.TRANSACTION_COLLECTION)
+        .doc(transactionModel.id)
+        .update(transactionModel.toMap())
+        .then((value) {
+      if (transactionModel.status == TransactionStatus.APPROVED)
+        SnackBarService.instance.showSnackBarSuccess(
+            'Cheque approved and sent to ${transactionModel.storeDetail.printerEmail} for printing');
+      else
+        SnackBarService.instance.showSnackBarError(
+            'Cheque rejected and routed back to the ${transactionModel.initiatorDetail.name}');
+      return true;
+    }).onError((error, stackTrace) {
+      return false;
+    });
+    return false;
   }
 }

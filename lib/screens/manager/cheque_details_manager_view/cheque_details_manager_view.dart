@@ -1,16 +1,29 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fastcheque/main.dart';
+import 'package:fastcheque/model/manager_model.dart';
+import 'package:fastcheque/model/transaction_model.dart';
 import 'package:fastcheque/screens/manager/manager_home_container/manager_home_container.dart';
+import 'package:fastcheque/service/firestore_service.dart';
+import 'package:fastcheque/service/snakbar_service.dart';
+import 'package:fastcheque/service/storage_service.dart';
 import 'package:fastcheque/utils/color.dart';
 import 'package:fastcheque/utils/constants.dart';
+import 'package:fastcheque/utils/preference_key.dart';
 import 'package:fastcheque/widgets/custom_textfield.dart';
 import 'package:fastcheque/widgets/heading.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ChequeDetailsManagerView extends StatefulWidget {
   static const String CHEQUE_DETAILS_MANAGER_VIEW =
       '/manager/chequeDetailManagerView';
-
-  const ChequeDetailsManagerView({Key? key}) : super(key: key);
+  final Object transaction;
+  const ChequeDetailsManagerView({Key? key, required this.transaction})
+      : super(key: key);
 
   @override
   _ChequeDetailsManagerViewState createState() =>
@@ -51,24 +64,33 @@ class _ChequeDetailsManagerViewState extends State<ChequeDetailsManagerView> {
 
   int imageCount = 2;
   bool isEditingAllowed = false;
+  List<String> chequeUrlList = [];
+
+  late TransactionModel _transactionModel =
+      widget.transaction as TransactionModel;
+  late ManagerModel manager =
+      ManagerModel.fromJson(prefs.getString(PreferenceKey.USER_DATA)!);
 
   @override
   void initState() {
     super.initState();
-    _stockNumberController.text = "ABCD1234";
-    _customerNameController.text = 'Customer name';
-    _addressController.text = '123/A, Bla Bla Road';
-    _cityController.text = 'Kolkata';
-    _stateController.text = 'West Bengal';
-    _zipController.text = '700001';
-    _chequeAmountController.text = '10000';
-    _phoneController.text = '9804945122';
-    _emailController.text = 'akx.sonu@gmail.com';
-    _requestDateController.text = '08/01/2021';
+    _stockNumberController.text = _transactionModel.stockNumber;
+    _customerNameController.text = _transactionModel.customerName;
+    _addressController.text = _transactionModel.address;
+    _cityController.text = _transactionModel.city;
+    _stateController.text = _transactionModel.state;
+    _zipController.text = _transactionModel.zipCode.toString();
+    _chequeAmountController.text = _transactionModel.chequeAmount.toString();
+    _phoneController.text = _transactionModel.phoneNumber;
+    _emailController.text = _transactionModel.email;
+    _requestDateController.text = _transactionModel.requestDate;
+    selectedDate = _transactionModel.createAt;
+    chequeUrlList = _transactionModel.photos;
   }
 
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -173,31 +195,58 @@ class _ChequeDetailsManagerViewState extends State<ChequeDetailsManagerView> {
                 alignment: WrapAlignment.start,
                 runAlignment: WrapAlignment.spaceBetween,
                 children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    alignment: Alignment.center,
-                    child: IconButton(
-                      onPressed: () {
-                        if (imageCount < 3)
-                          setState(() {
-                            imageCount++;
-                          });
-                      },
-                      icon: Icon(
-                        Icons.add,
-                        color: primaryColor,
-                        size: 30,
+                  if (isEditingAllowed)
+                    Container(
+                      width: 80,
+                      height: 80,
+                      alignment: Alignment.center,
+                      child: IconButton(
+                        onPressed: () async {
+                          if (chequeUrlList.length == 3) {
+                            SnackBarService.instance.showSnackBarError(
+                                'You can upload at max 3 images');
+                            return;
+                          }
+                          var permission =
+                              await Permission.storage.request().isGranted;
+                          if (permission) {
+                            final ImagePicker _picker = ImagePicker();
+                            final XFile? image = await _picker.pickImage(
+                                source: ImageSource.gallery);
+
+                            if (image != null) {
+                              File file = File(image.path);
+                              String url = await StorageService.instance
+                                  .uploadCheque(file, context);
+                              if (url.length > 0) {
+                                setState(() {
+                                  chequeUrlList.add(url);
+                                });
+                              }
+                            } else {
+                              // User canceled the picker
+                              SnackBarService.instance.showSnackBarError(
+                                  'No file has been uploaded');
+                            }
+                          } else {
+                            SnackBarService.instance
+                                .showSnackBarError('Storage access denied');
+                          }
+                        },
+                        icon: Icon(
+                          Icons.add,
+                          color: primaryColor,
+                          size: 30,
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(
+                          color: primaryColor,
+                        ),
                       ),
                     ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: primaryColor,
-                      ),
-                    ),
-                  ),
-                  for (var i = 0; i < imageCount; i++) ...{
+                  for (var i = 0; i < chequeUrlList.length; i++) ...{
                     Stack(
                       children: [
                         Container(
@@ -205,20 +254,25 @@ class _ChequeDetailsManagerViewState extends State<ChequeDetailsManagerView> {
                           height: 80,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: primaryColor,
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                chequeUrlList.elementAt(i),
+                              ),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                         Positioned(
                           right: 2,
                           top: 2,
                           child: InkWell(
-                            onTap: () {
-                              if (imageCount > 0) {
-                                setState(() {
-                                  imageCount--;
-                                });
-                              }
-                            },
+                            onTap: isEditingAllowed
+                                ? () {
+                                    setState(() {
+                                      chequeUrlList.removeAt(i);
+                                    });
+                                  }
+                                : null,
                             child: Icon(
                               Icons.close,
                               color: Colors.white,
@@ -247,7 +301,18 @@ class _ChequeDetailsManagerViewState extends State<ChequeDetailsManagerView> {
                 ),
                 Expanded(
                   child: TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () async {
+                      _transactionModel.rejectionReason = '';
+                      _transactionModel.status = TransactionStatus.APPROVED;
+                      _transactionModel.approverDetail = manager;
+                      _transactionModel.lastUpdated = Timestamp.now();
+                      await FireStoreService.instance
+                          .updateTransaction(_transactionModel)
+                          .then((value) {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                      });
+                    },
                     child: Text(
                       'Accept',
                       style: TextStyle(color: Colors.white),
@@ -297,10 +362,26 @@ class _ChequeDetailsManagerViewState extends State<ChequeDetailsManagerView> {
               SizedBox(
                 width: double.infinity,
                 child: TextButton(
-                  onPressed: () => Navigator.of(context)
-                      .pushNamedAndRemoveUntil(
-                          ManagerHomeContainer.MANAGER_HOME_CONTAINER_ROUTE,
-                          (route) => false),
+                  onPressed: () async {
+                    if (_rejectionReasonController.text.isEmpty) {
+                      SnackBarService.instance
+                          .showSnackBarError('Enter rejection reason');
+                      Navigator.of(context).pop();
+                      return;
+                    }
+
+                    _transactionModel.rejectionReason =
+                        _rejectionReasonController.text;
+                    _transactionModel.status = TransactionStatus.REJECTED;
+                    _transactionModel.asignedTo = _transactionModel.initiatorID;
+                    _transactionModel.lastUpdated = Timestamp.now();
+                    await FireStoreService.instance
+                        .updateTransaction(_transactionModel)
+                        .then((value) {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    });
+                  },
                   child: Text(
                     'Reject',
                     style: TextStyle(color: Colors.white),

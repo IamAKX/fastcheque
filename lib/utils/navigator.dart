@@ -33,7 +33,10 @@ class NavRoute {
                   transaction: settings.arguments!,
                 ));
       case ChequeDetailsManagerView.CHEQUE_DETAILS_MANAGER_VIEW:
-        return MaterialPageRoute(builder: (_) => ChequeDetailsManagerView());
+        return MaterialPageRoute(
+            builder: (_) => ChequeDetailsManagerView(
+                  transaction: settings.arguments!,
+                ));
       case StaffDetailView.STAFF_DETAIL_VIEW:
         return MaterialPageRoute(
             builder: (_) => StaffDetailView(
