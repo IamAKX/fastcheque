@@ -118,6 +118,7 @@ class FireStoreService extends ChangeNotifier {
     notifyListeners();
     await _firestore
         .collection(DatabaseConstants.TRANSACTION_COLLECTION)
+        .orderBy('lastUpdated', descending: true)
         .where('initiatorID', isEqualTo: id)
         .get()
         .then((querySnapshot) {
@@ -158,7 +159,7 @@ class FireStoreService extends ChangeNotifier {
     }).catchError((error) {
       status = DatabaseTransactionStatus.FAILED;
       notifyListeners();
-      SnackBarService.instance.showSnackBarError(error);
+      SnackBarService.instance.showSnackBarError(error.toString());
     });
     status = DatabaseTransactionStatus.SUCCESS;
     notifyListeners();

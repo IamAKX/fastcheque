@@ -64,8 +64,8 @@ class _RequestHistoryState extends State<RequestHistory> {
                 subtitle:
                     statusText.elementAt(getIndexByStatus(transaction.status)),
                 isThreeLine: true,
-                trailing: Text(timeago.format(transaction.lastUpdated.toDate(),
-                    locale: 'en_short')),
+                trailing: Text(
+                    '${timeago.format(transaction.lastUpdated.toDate(), locale: 'en_short')} ago'),
               );
             },
           );
